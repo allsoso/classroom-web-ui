@@ -50,7 +50,6 @@ export default function LoginPage() {
       const response = await signin(loginData);
       saveToken(response.access_token);
       saveUserData(response.user);
-      // Redireciona para a página principal
       navigate('/');
     } catch (error) {
       setError(error.response?.data?.message || 'Erro ao fazer login. Verifique suas credenciais.');
@@ -68,7 +67,6 @@ export default function LoginPage() {
       const response = await signup(signupData);
       saveToken(response.access_token);
       saveUserData(response.user);
-      // Redireciona para a página principal
       navigate('/');
     } catch (error) {
       setError(error.response?.data?.message || 'Erro ao criar conta. Verifique os dados informados.');
@@ -85,9 +83,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
       <div className="w-full max-w-md">
-        {/* Card principal */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
-          {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               {isSignup ? 'Criar Conta' : 'Entrar'}
@@ -100,9 +96,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Formulário */}
           <form onSubmit={isSignup ? handleSignup : handleLogin} className="space-y-6">
-            {/* Nome (apenas no cadastro) */}
             {isSignup && (
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -121,7 +115,6 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Email
@@ -138,7 +131,6 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Senha */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Senha
@@ -155,7 +147,6 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Tipo de usuário (apenas no cadastro) */}
             {isSignup && (
               <div>
                 <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -174,14 +165,12 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Mensagem de erro */}
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-3">
                 <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
               </div>
             )}
 
-            {/* Botão de submit */}
             <Button
               type="submit"
               disabled={isLoading}
@@ -198,7 +187,6 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          {/* Divisor */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
@@ -210,7 +198,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Botão para alternar modo */}
           <div className="text-center">
             <Button
               variant="ghost"
