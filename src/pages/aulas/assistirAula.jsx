@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { buscarVideoPorId } from "../../api/aulas/listar"
 import { listarQuestionsPorContent } from "../../api/duvidas/listar"
 import { createQuestion } from "../../api/duvidas/criar"
+import { buscarUsuarioPorId } from "../../api/usuarios/buscarPorId"
 import { VideoPlayer } from "../../components/ui/video-player"
 import { Button } from "../../components/ui/button"
 import { Input } from "../../components/ui/input"
@@ -17,12 +18,12 @@ export default function AssistirAula() {
   const [loadingQuestions, setLoadingQuestions] = useState(false)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [currentTime, setCurrentTime] = useState("0:00")
+  const [userNames, setUserNames] = useState({})
   const [newQuestion, setNewQuestion] = useState({
     question: "",
     type: "DUVIDA",
     private: false,
-    content_position: "0:00",
-    id_content: null
+    content_position: "0:00"
   })
 
   useEffect(() => {
@@ -70,6 +71,25 @@ export default function AssistirAula() {
         setLoadingQuestions(true)
         const data = await listarQuestionsPorContent(id)
         setQuestions(data)
+        
+        // Buscar nomes dos usuários
+        const userIds = new Set()
+        data.forEach(question => {
+          if (question.id_created_by) userIds.add(question.id_created_by)
+          if (question.id_answered_by) userIds.add(question.id_answered_by)
+        })
+        
+        const userNamesData = {}
+        for (const userId of userIds) {
+          try {
+            const userData = await buscarUsuarioPorId(userId)
+            userNamesData[userId] = userData.name || userData.nome || 'Usuário'
+          } catch (err) {
+            console.error(`Erro ao buscar usuário ${userId}:`, err)
+            userNamesData[userId] = 'Usuário'
+          }
+        }
+        setUserNames(userNamesData)
       } catch (err) {
         console.error('Erro ao buscar questions:', err)
         console.error('Detalhes do erro:', {
@@ -112,7 +132,7 @@ export default function AssistirAula() {
     e.preventDefault()
     
     if (!newQuestion.question.trim()) {
-      alert('Por favor, insira sua dúvida.')
+      alert('Insira sua dúvida.')
       return
     }
 
@@ -132,13 +152,12 @@ export default function AssistirAula() {
         question: "",
         type: "DUVIDA",
         private: false,
-        content_position: currentTime,
-        id_content: null
+        content_position: currentTime
       })
       setShowCreateForm(false)
     } catch (err) {
       console.error('Erro ao criar question:', err)
-      alert('Erro ao criar dúvida. Tente novamente.')
+      alert(`Erro ao criar dúvida: ${err.message}`)
     }
   }
 
@@ -168,21 +187,6 @@ export default function AssistirAula() {
               className="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
             >
               Tentar novamente
-            </button>
-            <button 
-              onClick={() => {
-                console.log('Testando API...')
-                buscarVideoPorId(id).then(data => {
-                  console.log('Teste da API bem-sucedido:', data)
-                  alert('API funcionando! Verifique o console para detalhes.')
-                }).catch(err => {
-                  console.error('Teste da API falhou:', err)
-                  alert('API com erro! Verifique o console para detalhes.')
-                })
-              }}
-              className="ml-2 px-4 py-2 text-sm font-medium bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors"
-            >
-              Testar API
             </button>
           </div>
         </div>
@@ -233,7 +237,7 @@ export default function AssistirAula() {
               {showCreateForm ? 'Cancelar' : '+ Nova Dúvida'}
             </Button>
           </div>
-
+          
           {showCreateForm && (
             <div className="p-4 border rounded-lg bg-background">
               <form onSubmit={handleCreateQuestion} className="space-y-4">
@@ -252,7 +256,7 @@ export default function AssistirAula() {
                     className="mb-2"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Você pode modificar o minut ou deixar o atual
+                    Você pode modificar o minuto ou deixar o atual
                   </p>
                 </div>
                 
@@ -320,7 +324,6 @@ export default function AssistirAula() {
             </div>
           )}
 
-          {console.log('QUESTIONS DEBUG:', questions)}
           <div className="space-y-4">
             {loadingQuestions ? (
               <div className="flex items-center justify-center py-4">
@@ -347,8 +350,15 @@ export default function AssistirAula() {
                       </span>
                     )}
                   </div>
+                  
                   <div className="mb-2">
                     <span className="block text-base font-medium text-gray-900">{question.question?.trim() ? question.question : 'Sem texto'}</span>
+                  </div>
+                  
+                  <div className="mb-2">
+                    <p className="text-xs text-muted-foreground">
+                      Por: <span className="font-medium">{userNames[question.id_created_by] || 'Usuário'}</span>
+                    </p>
                   </div>
                   
                   {question.answer && (
@@ -359,11 +369,16 @@ export default function AssistirAula() {
                         </span>
                       </div>
                       <p className="text-sm text-gray-800">{question.answer}</p>
-                      {question.answeredAt && (
-                        <p className="text-xs text-green-600 mt-1">
-                          Respondido em {new Date(question.answeredAt).toLocaleDateString('pt-BR')} às {new Date(question.answeredAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                      <div className="mt-2">
+                        <p className="text-xs text-muted-foreground">
+                          Respondido por: <span className="font-medium">{userNames[question.id_answered_by] || 'Usuário'}</span>
                         </p>
-                      )}
+                        {question.answeredAt && (
+                          <p className="text-xs text-green-600 mt-1">
+                            Respondido em {new Date(question.answeredAt).toLocaleDateString('pt-BR')} às {new Date(question.answeredAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   )}
                   

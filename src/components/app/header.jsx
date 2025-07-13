@@ -13,7 +13,15 @@ import { logout, getUserData } from "../../lib/auth"
 
 export function Header() {
   const navigate = useNavigate();
-  const userData = getUserData();
+  
+  // Obter dados do usuário de forma segura
+  let userData = null;
+  try {
+    userData = getUserData();
+  } catch (error) {
+    console.error('Erro ao obter dados do usuário no Header:', error);
+    userData = null;
+  }
 
   const handleLogout = () => {
     logout();
@@ -30,71 +38,77 @@ export function Header() {
                 Aulas
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <ul className="grid w-[200px] gap-3 p-4">
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to="/aulas/listar"
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                      >
-                        <div className="text-sm font-medium leading-none">Listar</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Visualizar todas as aulas disponíveis
-                        </p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to="/aulas/criar"
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                      >
-                        <div className="text-sm font-medium leading-none">Criar</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Criar uma nova aula
-                        </p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                </ul>
+                <div className="w-[200px] p-2">
+                  <NavigationMenuLink asChild>
+                    <Link
+                      to="/aulas/listar"
+                      className={cn(
+                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                        "text-white hover:bg-gray-700"
+                      )}
+                    >
+                      <div className="text-sm font-medium leading-none">Listar Aulas</div>
+                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                        Visualize todas as aulas disponíveis
+                      </p>
+                    </Link>
+                  </NavigationMenuLink>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      to="/aulas/criar"
+                      className={cn(
+                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                        "text-white hover:bg-gray-700"
+                      )}
+                    >
+                      <div className="text-sm font-medium leading-none">Criar Aula</div>
+                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                        Crie uma nova aula
+                      </p>
+                    </Link>
+                  </NavigationMenuLink>
+                </div>
               </NavigationMenuContent>
             </NavigationMenuItem>
+            
             <NavigationMenuItem>
               <NavigationMenuTrigger className="text-white hover:bg-gray-700">
                 Turmas
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <ul className="grid w-[200px] gap-3 p-4">
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to="/turma/listar"
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                      >
-                        <div className="text-sm font-medium leading-none">Listar</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Visualizar todas as turmas
-                        </p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to="/turma/criar"
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                      >
-                        <div className="text-sm font-medium leading-none">Criar</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Criar uma nova turma
-                        </p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                </ul>
+                <div className="w-[200px] p-2">
+                  <NavigationMenuLink asChild>
+                    <Link
+                      to="/turma/listar"
+                      className={cn(
+                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                        "text-white hover:bg-gray-700"
+                      )}
+                    >
+                      <div className="text-sm font-medium leading-none">Listar Turmas</div>
+                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                        Visualize todas as turmas
+                      </p>
+                    </Link>
+                  </NavigationMenuLink>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      to="/turma/criar"
+                      className={cn(
+                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                        "text-white hover:bg-gray-700"
+                      )}
+                    >
+                      <div className="text-sm font-medium leading-none">Criar Turma</div>
+                      <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                        Crie uma nova turma
+                      </p>
+                    </Link>
+                  </NavigationMenuLink>
+                </div>
               </NavigationMenuContent>
             </NavigationMenuItem>
+            
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
                 <Link
@@ -111,11 +125,11 @@ export function Header() {
         </NavigationMenu>
         
         <div className="flex items-center gap-4">
-          {userData && (
+          {userData && userData.name && (
             <div className="text-white text-sm">
               <span className="text-gray-300">Olá, </span>
               <span className="font-medium">{userData.name}</span>
-              <span className="text-gray-400 ml-1">({userData.role})</span>
+              {userData.role && <span className="text-gray-400 ml-1">({userData.role})</span>}
             </div>
           )}
           <Button

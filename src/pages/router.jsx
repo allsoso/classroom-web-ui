@@ -9,14 +9,15 @@ import CadastrarTurma from "./turma/cadastrarTurma"
 import ListarTurmas from "./turma/listarTurmas"
 import ListarAlunos from "./turma/listarAlunos"
 import ResponderDuvida from "./duvidas/responder"
-import { isAuthenticated } from "../lib/auth"
+import ListarDuvidas from "./duvidas/listarDuvidas"
+import { isUserAuthenticated } from "../lib/auth"
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={
-          isAuthenticated() ? <Navigate to="/" replace /> : <LoginPage />
+          isUserAuthenticated() ? <Navigate to="/" replace /> : <LoginPage />
         } />
         
         <Route path="/" element={
@@ -31,7 +32,7 @@ export default function AppRouter() {
           <Route path="turma/listar" element={<ListarTurmas />} />
           <Route path="turma/criar" element={<CadastrarTurma />} />
           <Route path="turma/:id/alunos" element={<ListarAlunos />} />
-          <Route path="duvidas" element={<Duvidas />} />
+          <Route path="duvidas" element={<ListarDuvidas />} />
           <Route path="duvidas/responder/:id" element={<ResponderDuvida />} />
         </Route>
         
@@ -92,45 +93,4 @@ function HomePage() {
 
 
 
-function Duvidas() {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dúvidas</h1>
-        <p className="text-muted-foreground">
-          Tire suas dúvidas sobre o conteúdo
-        </p>
-      </div>
 
-      <div className="max-w-2xl space-y-4">
-        <div className="p-4 border rounded-lg">
-          <h3 className="text-lg font-semibold mb-2">Como funciona o React Router?</h3>
-          <p className="text-muted-foreground mb-3">
-            Gostaria de entender melhor como implementar rotas dinâmicas...
-          </p>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <span>Por: João Silva</span>
-            <span>2 respostas</span>
-            <span>há 1 hora</span>
-          </div>
-        </div>
-        
-        <div className="p-4 border rounded-lg">
-          <h3 className="text-lg font-semibold mb-2">Dúvida sobre Hooks</h3>
-          <p className="text-muted-foreground mb-3">
-            Quando devo usar useEffect vs useMemo?...
-          </p>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <span>Por: Maria Santos</span>
-            <span>5 respostas</span>
-            <span>há 3 horas</span>
-          </div>
-        </div>
-        
-        <button className="w-full px-4 py-3 text-sm font-medium border rounded-md hover:bg-accent transition-colors">
-          Nova Dúvida
-        </button>
-      </div>
-    </div>
-  )
-}

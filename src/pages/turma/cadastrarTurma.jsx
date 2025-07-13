@@ -29,7 +29,7 @@ const CadastrarTurma = () => {
       setMessage('Turma criada com sucesso!');
       setFormData({ nome: '', codigo: '', descricao: '' });
     } catch (error) {
-      console.error('Erro ao criar turma:', error);
+      console.error(error);
       setMessage('Erro ao criar turma. Tente novamente.');
     } finally {
       setLoading(false);

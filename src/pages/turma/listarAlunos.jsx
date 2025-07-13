@@ -16,7 +16,7 @@ const ListarAlunos = () => {
         const data = await getClassroomStudents(id);
         setAlunos(data);
       } catch (err) {
-        console.error('Erro ao buscar alunos:', err);
+        console.error(err);
         setError('Erro ao carregar os alunos. Tente novamente.');
       } finally {
         setLoading(false);
