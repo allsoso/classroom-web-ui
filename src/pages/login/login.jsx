@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { signin, signup, saveToken, saveUserData } from '../../api/auth';
+import { signin, signup, saveToken, saveUserData, getUserData, getToken } from '../../api/auth';
 import { cn } from '../../lib/utils';
 
 export default function LoginPage() {
@@ -11,13 +11,11 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   
-  // Estados para login
   const [loginData, setLoginData] = useState({
     email: '',
     password: ''
   });
   
-  // Estados para cadastro
   const [signupData, setSignupData] = useState({
     email: '',
     password: '',
@@ -48,10 +46,41 @@ export default function LoginPage() {
 
     try {
       const response = await signin(loginData);
+      
       saveToken(response.access_token);
-      saveUserData(response.user);
+      
+      // Se a API não retornar dados do usuário, extrair do token JWT
+      let userData = response.user;
+      if (!userData && response.access_token) {
+        try {
+          // Decodificar o token JWT para extrair dados do usuário
+          const tokenPayload = JSON.parse(atob(response.access_token.split('.')[1]));
+          
+          userData = {
+            id: tokenPayload.sub,
+            email: tokenPayload.email,
+            name: tokenPayload.name || 'Usuário',
+            role: tokenPayload.role || 'ALUNO'
+          };
+        } catch (error) {
+          console.error('Erro ao decodificar token:', error);
+          userData = {
+            id: 1,
+            email: loginData.email,
+            name: 'Usuário',
+            role: 'ALUNO'
+          };
+        }
+      }
+      
+      saveUserData(userData);
+      
+      // Aguardar um pouco para garantir que os dados sejam salvos
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       navigate('/');
     } catch (error) {
+      console.error('Erro no login:', error);
       setError(error.response?.data?.message || 'Erro ao fazer login. Verifique suas credenciais.');
     } finally {
       setIsLoading(false);
@@ -65,10 +94,41 @@ export default function LoginPage() {
 
     try {
       const response = await signup(signupData);
+      
       saveToken(response.access_token);
-      saveUserData(response.user);
+      
+      // Se a API não retornar dados do usuário, extrair do token JWT
+      let userData = response.user;
+      if (!userData && response.access_token) {
+        try {
+          // Decodificar o token JWT para extrair dados do usuário
+          const tokenPayload = JSON.parse(atob(response.access_token.split('.')[1]));
+          
+          userData = {
+            id: tokenPayload.sub,
+            email: tokenPayload.email,
+            name: tokenPayload.name || signupData.name,
+            role: tokenPayload.role || signupData.role
+          };
+        } catch (error) {
+          console.error('Erro ao decodificar token:', error);
+          userData = {
+            id: 1,
+            email: signupData.email,
+            name: signupData.name,
+            role: signupData.role
+          };
+        }
+      }
+      
+      saveUserData(userData);
+      
+      // Aguardar um pouco para garantir que os dados sejam salvos
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       navigate('/');
     } catch (error) {
+      console.error('Erro no signup:', error);
       setError(error.response?.data?.message || 'Erro ao criar conta. Verifique os dados informados.');
     } finally {
       setIsLoading(false);

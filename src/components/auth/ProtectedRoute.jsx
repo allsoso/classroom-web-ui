@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { isAuthenticated } from '../../lib/auth';
+import { isUserAuthenticated } from '../../lib/auth';
 
 export default function ProtectedRoute({ children }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -8,7 +8,7 @@ export default function ProtectedRoute({ children }) {
 
   useEffect(() => {
     const checkAuth = () => {
-      const authenticated = isAuthenticated();
+      const authenticated = isUserAuthenticated();
       setIsAuth(authenticated);
       setIsLoading(false);
     };
